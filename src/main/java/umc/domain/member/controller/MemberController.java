@@ -27,7 +27,7 @@ public class MemberController {
 	private final MemberQueryService memberQueryService;
 
 	// 마이페이지
-	@PostMapping("/{memberId}/mypage")
+	@GetMapping("/{memberId}/mypage")
 	public ApiResponse<MemberResDTO.GetInfo> getInfo(
 		@PathVariable(name = "memberId") Long memberId
 	) {
