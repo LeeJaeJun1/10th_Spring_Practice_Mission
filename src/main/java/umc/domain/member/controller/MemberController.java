@@ -23,7 +23,6 @@ import umc.global.apiPayload.code.GeneralSuccessCode;
 
 public class MemberController {
 
-	private final MemberQueryService memberService;
 	private final MemberQueryService memberQueryService;
 
 	// 마이페이지
@@ -31,7 +30,7 @@ public class MemberController {
 	public ApiResponse<MemberResDTO.GetInfo> getInfo(
 		@PathVariable(name = "memberId") Long memberId
 	) {
-		MemberResDTO.GetInfo getInfo = memberService.getInfo(memberId);
+		MemberResDTO.GetInfo getInfo = memberQueryService.getInfo(memberId);
 
 		return ApiResponse.onSuccess(MemberSuccessCode.OK, getInfo);
 	}
