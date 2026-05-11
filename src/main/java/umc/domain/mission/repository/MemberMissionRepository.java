@@ -24,6 +24,9 @@ public interface MemberMissionRepository extends JpaRepository<MemberMission, Lo
 	);
 
 	// 홈화면 프로그레스 바
-	@Query("SELECT COUNT(mm) FROM MemberMission mm WHERE mm.member.id = :memberId AND mm.status = 'SUCCESS'")
-	Integer countCompletedMissions(@Param("memberId") Long memberId);
+	@Query("SELECT COUNT(mm) FROM MemberMission mm WHERE mm.member.id = :memberId AND mm.status = :status")
+	Integer countCompletedMissions(
+		@Param("memberId") Long memberId,
+		@Param("status") MissionStatus status
+	);
 }

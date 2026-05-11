@@ -14,6 +14,7 @@ import umc.domain.member.exception.MemberException;
 import umc.domain.member.exception.code.MemberErrorCode;
 import umc.domain.member.repository.MemberRepository;
 import umc.domain.mission.entity.Mission;
+import umc.domain.mission.enums.MissionStatus;
 import umc.domain.mission.repository.MemberMissionRepository;
 import umc.domain.mission.repository.MissionRepository;
 import umc.domain.store.exception.StoreException;
@@ -36,8 +37,6 @@ public class MemberQueryService {
 			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
 		return MemberConverter.toGetInfo(member);
-
-
 	}
 
 	// 홈화면
@@ -51,7 +50,7 @@ public class MemberQueryService {
 			throw new StoreException(StoreErrorCode.REGION_NOT_FOUND);
 		}
 
-		Integer completeCount = memberMissionRepository.countCompletedMissions(memberId);
+		Integer completeCount = memberMissionRepository.countCompletedMissions(memberId, MissionStatus.SUCCESS);
 
 		Page<Mission> missionPage = missionRepository.findAvailableMissionsByRegion(memberId, regionName, PageRequest.of(page, 10));
 
