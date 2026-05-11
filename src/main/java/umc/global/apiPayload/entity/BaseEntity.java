@@ -1,4 +1,4 @@
-package umc.global.apiPayload.code;
+package umc.global.apiPayload.entity;
 
 import java.time.LocalDateTime;
 
