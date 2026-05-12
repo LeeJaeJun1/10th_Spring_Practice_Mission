@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import umc.domain.review.converter.ReviewConverter;
 import umc.domain.review.dto.ReviewReqDTO;
@@ -28,10 +30,11 @@ public class StoreController {
 
 	// 리뷰작성
 	@PostMapping("/{storeId}/reviews")
+	@Operation(summary = "리뷰 작성")
 	public ApiResponse<ReviewResDTO.CreateReviewResultDTO> createReview(
 		@RequestParam(name = "memberId") Long memberId,
 		@PathVariable(name = "storeId") Long storeId,
-		@RequestBody ReviewReqDTO.ReviewCreateDTO request) {
+		@RequestBody @Valid ReviewReqDTO.ReviewCreateDTO request) {
 
 		Review review = reviewCommandService.createReview(memberId, storeId, request);
 
