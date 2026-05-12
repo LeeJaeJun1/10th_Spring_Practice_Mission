@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.global.apiPayload.code.BaseEntity;
+import umc.global.apiPayload.entity.BaseEntity;
 
 @Entity
 @Getter

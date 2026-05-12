@@ -2,9 +2,7 @@ package umc.domain.member.entity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,7 +25,7 @@ import umc.domain.member.enums.MemberStatus;
 import umc.domain.member.enums.SocialType;
 import umc.domain.mission.entity.mapping.MemberMission;
 import umc.domain.mission.enums.Address;
-import umc.global.apiPayload.code.BaseEntity;
+import umc.global.apiPayload.entity.BaseEntity;
 
 @Entity
 @Getter

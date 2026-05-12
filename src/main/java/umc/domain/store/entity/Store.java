@@ -1,7 +1,5 @@
 package umc.domain.store.entity;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import umc.global.apiPayload.code.BaseEntity;
+import umc.global.apiPayload.entity.BaseEntity;
 
 @Entity
 @Getter

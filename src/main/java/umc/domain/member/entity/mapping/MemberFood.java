@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import umc.domain.member.entity.Member;
 import umc.domain.store.entity.Food;
-import umc.global.apiPayload.code.BaseEntity;
+import umc.global.apiPayload.entity.BaseEntity;
 
 @Entity
 @Getter

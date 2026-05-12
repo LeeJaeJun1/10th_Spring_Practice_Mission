@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import umc.domain.member.entity.Member;
 import umc.domain.mission.entity.Mission;
 import umc.domain.mission.enums.MissionStatus;
-import umc.global.apiPayload.code.BaseEntity;
+import umc.global.apiPayload.entity.BaseEntity;
 
 @Entity
 @Getter
