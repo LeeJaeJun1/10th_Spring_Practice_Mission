@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
@@ -27,6 +28,7 @@ public class MemberController {
 
 	// 마이페이지
 	@GetMapping("/{memberId}/mypage")
+	@Operation(summary = "마이페이지 조회")
 	public ApiResponse<MemberResDTO.GetInfo> getInfo(
 		@PathVariable(name = "memberId") Long memberId
 	) {
@@ -38,6 +40,7 @@ public class MemberController {
 
 	// 회원가입
 	@PostMapping("/signup")
+	@Operation(summary = "회원가입")
 	public ApiResponse<String> join(@RequestBody MemberReqDTO.JoinDTO request) {
 		BaseSuccessCode code = MemberSuccessCode.MEMBER_JOINED;
 		return ApiResponse.onSuccess(GeneralSuccessCode.OK, null);
@@ -46,6 +49,7 @@ public class MemberController {
 
 	// 홈화면
 	@GetMapping("/{memberId}/home")
+	@Operation(summary = "홈화면 조회")
 	public ApiResponse<MemberResDTO.HomeResponseDTO> getHomeInfo(
 		@PathVariable(name = "memberId") Long memberId,
 		@RequestParam(name = "regionName") String regionName,
