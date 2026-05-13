@@ -16,6 +16,7 @@ import umc.domain.review.exception.code.ReviewSuccessCode;
 import umc.domain.review.service.ReviewQueryService;
 import umc.global.apiPayload.ApiResponse;
 import umc.global.apiPayload.code.BaseSuccessCode;
+import umc.global.dto.CursorResponseDTO;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -26,7 +27,7 @@ public class ReviewController {
 
 	@GetMapping("/members/{memberId}/reviews")
 	@Operation(summary = "리뷰 조회")
-	public ApiResponse<MissionResDTO.Pagination<ReviewResDTO.ReviewPreviewDTO>> getMyReviews(
+	public ApiResponse<CursorResponseDTO<ReviewResDTO.ReviewPreviewDTO>> getMyReviews(
 		@PathVariable(name = "memberId") Long memberId,
 		@RequestParam(name = "cursor", defaultValue = "-1") String cursor,
 		@RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,

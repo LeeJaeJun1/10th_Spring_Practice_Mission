@@ -32,6 +32,17 @@ public class ReviewResDTO {
 	}
 
 	@Builder
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class ReviewListDTO {
+		private List<ReviewPreviewDTO> reviews;
+		private Boolean hasNext;
+		private String cursor;
+		private Integer page;
+	}
+
+	@Builder
 	public record Pagination<T> (
 		List<T> data,
 		Boolean hasNext,

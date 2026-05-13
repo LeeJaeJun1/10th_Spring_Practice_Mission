@@ -8,21 +8,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import umc.domain.member.entity.Member;
+import umc.domain.member.exception.MemberException;
+import umc.domain.member.exception.code.MemberErrorCode;
+import umc.domain.member.repository.MemberRepository;
 import umc.domain.mission.converter.MissionConverter;
 import umc.domain.mission.dto.MissionResDTO;
 import umc.domain.review.converter.ReviewConverter;
 import umc.domain.review.dto.ReviewResDTO;
 import umc.domain.review.entity.Review;
 import umc.domain.review.repository.ReviewRepository;
+import umc.global.dto.CursorResponseDTO;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewQueryService {
 
 	private final ReviewRepository reviewRepository;
+	private final MemberRepository memberRepository;
 
 	@Transactional(readOnly = true)
-	public MissionResDTO.Pagination<ReviewResDTO.ReviewPreviewDTO> getMyReviews(Long memberId, String cursor, Integer pageSize, String sortType) {
+	public CursorResponseDTO<ReviewResDTO.ReviewPreviewDTO> getMyReviews(Long memberId, String cursor, Integer pageSize, String sortType) {
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
 		PageRequest pageRequest = PageRequest.of(0, pageSize);
 		Slice<Review> reviewSlice;
@@ -47,15 +56,10 @@ public class ReviewQueryService {
 			}
 		}
 
-		// 2. DTO 변환 및 결과 반환
-		List<ReviewResDTO.ReviewPreviewDTO> data = reviewSlice.getContent().stream()
-			.map(ReviewConverter::toReviewPreviewDTO).toList();
+		String nextCursor = ReviewConverter.getNextCursor(reviewSlice, sortType);
 
-		return MissionConverter.toPagination(
-			data,
-			reviewSlice.hasNext(),
-			ReviewConverter.getNextCursor(reviewSlice, sortType),
-			pageSize
-		);
+		Slice<ReviewResDTO.ReviewPreviewDTO> dtoSlice = reviewSlice.map(ReviewConverter::toReviewPreviewDTO);
+
+		return CursorResponseDTO.of(dtoSlice, nextCursor);
 	}
 }
