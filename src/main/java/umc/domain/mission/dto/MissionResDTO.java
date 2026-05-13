@@ -1,6 +1,7 @@
 package umc.domain.mission.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class MissionResDTO {
 		String storeName;
 		String missionContent;
 		Integer missionPoint;
-		Integer missionDeadline;
+		LocalTime missionDeadline;
 	}
 
 	// 미션목록 조회
@@ -69,7 +70,7 @@ public class MissionResDTO {
 		Long storeId;
 		String missionContent;
 		Integer missionPoint;
-		LocalDate missionDeadline;
+		LocalTime missionDeadline;
 	}
 
 	@Builder

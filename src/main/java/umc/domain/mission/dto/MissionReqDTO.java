@@ -1,6 +1,7 @@
 package umc.domain.mission.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,6 @@ public class MissionReqDTO {
 		@NotNull(message = "미션 성공 포인트는 필수입니다.")
 		private Integer missionPoint;
 		@NotNull(message = "마감기한은 필수입니다.")
-		private LocalDate missionDeadline;
+		private LocalTime missionDeadline;
 	}
 }
