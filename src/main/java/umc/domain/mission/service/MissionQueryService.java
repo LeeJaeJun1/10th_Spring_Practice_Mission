@@ -28,6 +28,8 @@ import umc.domain.store.entity.Store;
 import umc.domain.store.exception.StoreException;
 import umc.domain.store.exception.code.StoreErrorCode;
 import umc.domain.store.repository.StoreRepository;
+import umc.global.dto.CursorResponseDTO;
+import umc.global.dto.PageResponseDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +43,7 @@ public class MissionQueryService {
 
 	// 미션 조회
 	@Transactional(readOnly = true)
-	public MissionResDTO.MissionListDTO getMissions(Long memberId, MissionStatus status, Integer page) {
+	public PageResponseDTO<MissionResDTO.MissionPreviewDTO> getMissions(Long memberId, MissionStatus status, Integer page) {
 
 		Member member =  memberRepository.findById(memberId)
 			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
@@ -51,11 +53,13 @@ public class MissionQueryService {
 
 		Page<MemberMission> memberMissions = memberMissionRepository.findMyMissions(memberId, status, pageable);
 
-		return missionConverter.toMissionListDTO(memberMissions);
+		Page<MissionResDTO.MissionPreviewDTO> dtoPage = memberMissions.map(MissionConverter::toMissionPreviewDTO);
+
+		return PageResponseDTO.of(dtoPage);
 	}
 
 	// 가게 미션 조회
-	public MissionResDTO.Pagination<MissionResDTO.GetMission> getStoreMissions(
+	public CursorResponseDTO<MissionResDTO.GetMission> getStoreMissions(
 		Long storeId,
 		Integer pageSize,
 		String cursor,
@@ -66,13 +70,11 @@ public class MissionQueryService {
 			.orElseThrow(()-> new StoreException(StoreErrorCode.STORE_NOT_FOUND));
 		Sort sortInfo;
 
-
-
 		PageRequest pageRequest = PageRequest.of(0, pageSize);
 
 		long idCursor;
 		Slice<Mission> missionList;
-		String nextCursor;
+		String nextCursor = null;
 
 		if(!cursor.equals("-1")) {
 			String[] cursorSplit = cursor.split(":");
@@ -92,15 +94,14 @@ public class MissionQueryService {
 			}
 
 		}
+		else {
+			missionList = missionRepository.findMissionsByStore_IdOrderByIdDesc(storeId, pageRequest);
+		}
 
-		missionList = missionRepository.findMissionsByStore_IdOrderByIdDesc(storeId, pageRequest);
 		nextCursor = missionList.getContent().getLast().getId() + ":" + missionList.getContent().getLast().getId();
 
-		return MissionConverter.toPagination(
-			missionList.map(MissionConverter::toGetMission).toList(),
-			missionList.hasNext(),
-			nextCursor,
-			missionList.getSize()
-		);
+		Slice<MissionResDTO.GetMission> dtoSlice = missionList.map(MissionConverter::toGetMission);
+
+		return CursorResponseDTO.of(dtoSlice, nextCursor);
 	}
 }
