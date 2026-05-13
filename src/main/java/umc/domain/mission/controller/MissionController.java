@@ -24,6 +24,8 @@ import umc.domain.mission.service.MissionQueryService;
 import umc.global.apiPayload.ApiResponse;
 import umc.global.apiPayload.code.BaseSuccessCode;
 import umc.global.apiPayload.code.GeneralSuccessCode;
+import umc.global.dto.CursorResponseDTO;
+import umc.global.dto.PageResponseDTO;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -37,12 +39,12 @@ public class MissionController {
 	// 미션 목록 조회 (진행중, 완료)
 	@GetMapping("/members/{memberId}/missions")
 	@Operation(summary = "상태별 미션 조회")
-	public ApiResponse<MissionResDTO.MissionListDTO> getMyMissions(
+	public ApiResponse<PageResponseDTO<MissionResDTO.MissionPreviewDTO>> getMyMissions(
 		@PathVariable(name = "memberId") Long memberId,
 		@RequestParam(name = "status") MissionStatus status,
 		@RequestParam(defaultValue = "0") Integer page) {
 
-		MissionResDTO.MissionListDTO result = missionService.getMissions(memberId, status, page);
+		PageResponseDTO<MissionResDTO.MissionPreviewDTO> result = missionService.getMissions(memberId, status, page);
 
 		return ApiResponse.onSuccess(MissionSuccessCode.MISSION_FOUND, result);
 	}
@@ -70,7 +72,7 @@ public class MissionController {
 	// 가게 내 미션들 조회
 	@GetMapping("/stores/{storeId}/missions")
 	@Operation(summary = "가게 내 미션 조회")
-	public ApiResponse<MissionResDTO.Pagination<MissionResDTO.GetMission>> getMission(
+	public ApiResponse<CursorResponseDTO<MissionResDTO.GetMission>> getMission(
 		@PathVariable Long storeId,
 		@RequestParam Integer pageSize,
 		@RequestParam String cursor,

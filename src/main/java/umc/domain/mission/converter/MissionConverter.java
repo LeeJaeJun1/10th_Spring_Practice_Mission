@@ -68,6 +68,17 @@ public class MissionConverter {
 			.build();
 	}
 
+	public static MissionResDTO.MissionPreviewDTO toMissionPreviewDTO(MemberMission memberMission) {
+		return MissionResDTO.MissionPreviewDTO.builder()
+			.missionId(memberMission.getId())
+			.storeId(memberMission.getMission().getStore().getId())
+			.storeName(memberMission.getMission().getStore().getName())
+			.missionContent(memberMission.getMission().getMissionCondition())
+			.missionPoint(memberMission.getMission().getSuccessPoint())
+			.missionDeadline(memberMission.getMission().getDeadline())
+			.build();
+	}
+
 	public static <T> MissionResDTO.Pagination<T> toPagination(
 		List<T> data,
 		Boolean hasNext,
