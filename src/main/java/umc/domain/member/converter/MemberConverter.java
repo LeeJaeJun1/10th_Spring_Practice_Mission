@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 
+import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
 import umc.domain.member.entity.Member;
 import umc.domain.mission.entity.Mission;
@@ -63,6 +64,16 @@ public class MemberConverter {
 			.totalPoints(totalPoints)
 			.missionProgress(missionProgressDTO)
 			.missionList(toMissionListDTO(missionPage))
+			.build();
+	}
+	public static Member toMember(MemberReqDTO.JoinDTO request, String encodedPassword) {
+		return Member.builder()
+			.email(request.getEmail())
+			.password(encodedPassword)
+			.name(request.getName())
+			.gender(request.getGender())
+			.birth(request.getBirth())
+			.address(request.getAddress())
 			.build();
 	}
 }

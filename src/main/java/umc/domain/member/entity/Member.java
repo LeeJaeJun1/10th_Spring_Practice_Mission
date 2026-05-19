@@ -27,9 +27,9 @@ import umc.domain.mission.entity.mapping.MemberMission;
 import umc.domain.mission.enums.Address;
 import umc.global.apiPayload.entity.BaseEntity;
 
+@Builder
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member")
@@ -56,14 +56,15 @@ public class Member extends BaseEntity {
 	@Column(nullable = false, length = 100)
 	private String email;
 
+	@Builder.Default
 	@Column(nullable = false, length = 20)
-	private String phoneNumber;
+	private String phoneNumber = "";
 
-	@Column(nullable = false)
-	private Boolean isPhoneVerified;
+	@Builder.Default
+	private Boolean isPhoneVerified = false;
 
-	@Column(nullable = false)
-	private Integer point;
+	@Builder.Default
+	private Integer point = 0;
 
 	@Column(nullable = true, length = 100)
 	private String profileUrl;
@@ -72,10 +73,12 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private SocialType socialType;
 
+	@Builder.Default
 	@Column(nullable = false, length = 20)
 	@Enumerated(EnumType.STRING)
-	private MemberStatus memberStatus;
+	private MemberStatus memberStatus = MemberStatus.ACTIVE;
 
+	private String password;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MemberMission> memberMissionList = new ArrayList<>();

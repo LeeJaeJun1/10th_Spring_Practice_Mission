@@ -1,8 +1,13 @@
 package umc.domain.member.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import umc.domain.member.enums.Gender;
+import umc.domain.mission.enums.Address;
 
 public class MemberReqDTO {
 
@@ -15,11 +20,15 @@ public class MemberReqDTO {
 	@Getter
 	public static class JoinDTO {
 		List<TermDTO> terms; // 약관 동의 목록
+		@NotBlank(message = "이름은 필수입니다")
 		String name;
-		String gender;
-		String birth;
-		String address;
+		Gender gender;
+		LocalDate birth;
+		Address address;
+		@NotBlank(message = "이메일은 필수입니다") @Email(message = "이메일 형식이 아닙니다")
 		String email;
+		@NotBlank(message = "비밀번호는 필수입니다")
+		String password;
 		List<Long> favoriteFoods; // 선택한 선호 음식
 	}
 

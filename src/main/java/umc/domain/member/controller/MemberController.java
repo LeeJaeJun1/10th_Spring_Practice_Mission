@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
+import umc.domain.member.entity.Member;
 import umc.domain.member.exception.code.MemberSuccessCode;
+import umc.domain.member.service.MemberCommandService;
 import umc.domain.member.service.MemberQueryService;
 import umc.global.apiPayload.ApiResponse;
 import umc.global.apiPayload.code.BaseSuccessCode;
@@ -25,6 +28,7 @@ import umc.global.apiPayload.code.GeneralSuccessCode;
 public class MemberController {
 
 	private final MemberQueryService memberQueryService;
+	private final MemberCommandService memberCommandService;
 
 	// 마이페이지
 	@GetMapping("/{memberId}/mypage")
@@ -41,9 +45,12 @@ public class MemberController {
 	// 회원가입
 	@PostMapping("/signup")
 	@Operation(summary = "회원가입")
-	public ApiResponse<String> join(@RequestBody MemberReqDTO.JoinDTO request) {
+	public ApiResponse<String> join(@RequestBody @Valid MemberReqDTO.JoinDTO request) {
+
+		Member joins = memberCommandService.joinMember(request);
+
 		BaseSuccessCode code = MemberSuccessCode.MEMBER_JOINED;
-		return ApiResponse.onSuccess(GeneralSuccessCode.OK, null);
+		return ApiResponse.onSuccess(code, joins.getEmail());
 	}
 
 
