@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import lombok.Getter;
 import umc.domain.member.enums.Gender;
 import umc.domain.mission.enums.Address;
@@ -23,6 +24,7 @@ public class MemberReqDTO {
 		@NotBlank(message = "이름은 필수입니다")
 		String name;
 		Gender gender;
+		@Past
 		LocalDate birth;
 		Address address;
 		@NotBlank(message = "이메일은 필수입니다") @Email(message = "이메일 형식이 아닙니다")
