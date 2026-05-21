@@ -14,8 +14,11 @@ import umc.domain.member.entity.Member;
 import umc.domain.member.entity.Term;
 import umc.domain.member.entity.mapping.MemberFood;
 import umc.domain.member.entity.mapping.MemberTerm;
+import umc.domain.member.enums.TermStatus;
 import umc.domain.member.exception.MemberException;
+import umc.domain.member.exception.TermException;
 import umc.domain.member.exception.code.MemberErrorCode;
+import umc.domain.member.exception.code.TermErrorCode;
 import umc.domain.member.repository.MemberFoodRepository;
 import umc.domain.member.repository.MemberRepository;
 import umc.domain.member.repository.MemberTermRepository;
@@ -38,6 +41,28 @@ public class MemberCommandService {
 
 	@Transactional
 	public Member joinMember(MemberReqDTO.JoinDTO request) {
+
+		// 1. 이메일 중복 검증
+		if(memberRepository.existsByEmail(request.getEmail())) {
+			throw new MemberException(MemberErrorCode.EMAIL_ALREADY_EXISTS);
+		}
+
+		// 2. DB에서 필수 약관 ID 목록 조회
+		List<Long> requiredTermIds = termRepository.findAllByStatus(TermStatus.REQUIRED).stream()
+			.map(Term::getId)
+			.toList();
+
+		// 사용자가 동의(isAgree == true)한 약관 ID 목록 추출 및 필수 약관 검증
+		List<Long> agreedTermIds = (request.getTerms() == null) ? List.of() : request.getTerms().stream()
+			.filter(MemberReqDTO.TermDTO::getIsAgree) // true(동의) 한 것만 필터링
+			.map(MemberReqDTO.TermDTO::getTermId)
+			.toList();
+
+		// 만약 DB의 필수 약관 ID들 중, 사용자가 동의한 ID 목록에 없는 게 하나라도 있다면 예외 처리
+		if (!agreedTermIds.containsAll(requiredTermIds)) {
+			throw new TermException(TermErrorCode.REQUIRED_TERM_NOT_AGREED);
+		}
+
 		String encodedPassword = passwordEncoder.encode(request.getPassword());
 		Member newMember = MemberConverter.toMember(request, encodedPassword);
 
@@ -62,7 +87,7 @@ public class MemberCommandService {
 			List<MemberTerm> memberTermList = request.getTerms().stream()
 				.map(termDTO -> {
 					Term term = termRepository.findById(termDTO.getTermId())
-						.orElseThrow(()-> new MemberException(MemberErrorCode.TERM_NOT_FOUND));
+						.orElseThrow(()-> new TermException(TermErrorCode.TERM_NOT_FOUND));
 
 					return MemberTerm.builder()
 						.member(savedMember)
