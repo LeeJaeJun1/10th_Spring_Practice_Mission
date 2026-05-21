@@ -15,13 +15,14 @@ import umc.global.apiPayload.code.GeneralErrorCode;
 
 public class CustomAccessDenied implements AccessDeniedHandler {
 
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	@Override
 	public void handle(
 		HttpServletRequest request,
 		HttpServletResponse response,
 		AccessDeniedException accessDeniedException
 	) throws IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
 		BaseErrorCode code = GeneralErrorCode.FORBIDDEN;
 
 		// 응답 Content-Type, HTTP 상태코드 정의

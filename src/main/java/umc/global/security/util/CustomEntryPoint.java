@@ -15,13 +15,14 @@ import umc.global.apiPayload.code.GeneralErrorCode;
 
 public class CustomEntryPoint implements AuthenticationEntryPoint {
 
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	@Override
 	public void commence(
 		HttpServletRequest request,
 		HttpServletResponse response,
 		AuthenticationException authException
 	) throws IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
 		BaseErrorCode code = GeneralErrorCode.UNAUTHORIZED;
 
 		// 응답 Content-Type, HTTP 상태코드 정의
