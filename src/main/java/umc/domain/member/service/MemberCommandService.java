@@ -83,7 +83,7 @@ public class MemberCommandService {
 			memberFoodRepository.saveAll(memberFoodList);
 		}
 
-		if(request.getTerms() != null && request.getTerms().size() > 0) {
+		if(request.getTerms() != null) {
 			List<MemberTerm> memberTermList = request.getTerms().stream()
 				.map(termDTO -> {
 					Term term = termRepository.findById(termDTO.getTermId())
