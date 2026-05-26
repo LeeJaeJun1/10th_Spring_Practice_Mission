@@ -78,4 +78,12 @@ public class MemberResDTO {
 		Integer point;
 		LocalTime deadline;
 	}
+
+	@Builder
+	@Getter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class LoginResultDTO {
+		String accessToken;
+	}
 }
