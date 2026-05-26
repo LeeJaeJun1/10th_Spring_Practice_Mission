@@ -2,19 +2,31 @@ package umc.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.webauthn.management.JdbcPublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.JdbcUserCredentialRepository;
 
+import lombok.RequiredArgsConstructor;
+import umc.global.security.filter.JwtAuthFilter;
+import umc.global.security.service.CustomUserDetailsService;
 import umc.global.security.util.CustomAccessDenied;
 import umc.global.security.util.CustomEntryPoint;
+import umc.global.security.util.JwtUtil;
 
 @EnableWebSecurity // Spring Security 설정 활성화
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+	private final JwtUtil jwtUtil;
+	private final CustomUserDetailsService customUserDetailsService;
 
 	private final String[] allowUris = {
 		// Swagger 허용
@@ -23,6 +35,7 @@ public class SecurityConfig {
 		"/v3/api-docs/**",
 		"/auth/**",
 		"/api/v1/signup",
+		"/api/v1/login",
 		"/error/**",
 	};
 
@@ -34,10 +47,9 @@ public class SecurityConfig {
 				.requestMatchers(allowUris).permitAll() // allowUris에 있는 주소들은 누구나 접근 가능
 				.anyRequest().authenticated() // 그 외 모든 요청은 로그인 필요
 			)
-			.formLogin(form -> form
-				.defaultSuccessUrl("/swagger-ui/index.html", true)
-				.permitAll()
-			)
+			.formLogin(AbstractHttpConfigurer::disable)
+			.sessionManagement(AbstractHttpConfigurer::disable)
+			.addFilterBefore(jwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
 			.logout(logout -> logout
 				.logoutUrl("/logout")
 				.logoutSuccessUrl("/login?logout")
@@ -66,5 +78,21 @@ public class SecurityConfig {
 	@Bean
 	public CustomEntryPoint customEntryPoint() {
 		return new CustomEntryPoint();
+	}
+
+	@Bean
+	public JwtAuthFilter jwtAuthFilter() {
+		return new JwtAuthFilter(jwtUtil, customUserDetailsService);
+	}
+
+	@Bean
+	JdbcPublicKeyCredentialUserEntityRepository jdbcPublicKeyCredentialUserEntityRepository(
+		JdbcOperations jdbc) {
+		return new JdbcPublicKeyCredentialUserEntityRepository(jdbc);
+	}
+
+	@Bean
+	JdbcUserCredentialRepository jdbcUserCredentialRepository(JdbcOperations jdbc) {
+		return new JdbcUserCredentialRepository(jdbc);
 	}
 }
