@@ -1,5 +1,6 @@
 package umc.domain.member.converter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,6 +75,12 @@ public class MemberConverter {
 			.gender(request.getGender())
 			.birth(request.getBirth())
 			.address(request.getAddress())
+			.build();
+	}
+	public static MemberResDTO.JoinResultDTO toJoinDTO(Member member) {
+		return MemberResDTO.JoinResultDTO.builder()
+			.memberId(member.getId())
+			.createdAt(LocalDateTime.now())
 			.build();
 	}
 }

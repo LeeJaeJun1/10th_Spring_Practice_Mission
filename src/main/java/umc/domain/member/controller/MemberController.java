@@ -1,5 +1,6 @@
 package umc.domain.member.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import umc.domain.member.service.MemberQueryService;
 import umc.global.apiPayload.ApiResponse;
 import umc.global.apiPayload.code.BaseSuccessCode;
 import umc.global.apiPayload.code.GeneralSuccessCode;
+import umc.global.security.entity.AuthMember;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,12 +33,12 @@ public class MemberController {
 	private final MemberCommandService memberCommandService;
 
 	// 마이페이지
-	@GetMapping("/{memberId}/mypage")
+	@GetMapping("/users/me")
 	@Operation(summary = "마이페이지 조회")
 	public ApiResponse<MemberResDTO.GetInfo> getInfo(
-		@PathVariable(name = "memberId") Long memberId
+		@AuthenticationPrincipal AuthMember member
 	) {
-		MemberResDTO.GetInfo getInfo = memberQueryService.getInfo(memberId);
+		MemberResDTO.GetInfo getInfo = memberQueryService.getInfo(member);
 
 		return ApiResponse.onSuccess(MemberSuccessCode.OK, getInfo);
 	}
@@ -45,12 +47,12 @@ public class MemberController {
 	// 회원가입
 	@PostMapping("/signup")
 	@Operation(summary = "회원가입")
-	public ApiResponse<String> join(@RequestBody @Valid MemberReqDTO.JoinDTO request) {
+	public ApiResponse<MemberResDTO.JoinResultDTO> join(@RequestBody @Valid MemberReqDTO.JoinDTO request) {
 
-		Member joins = memberCommandService.joinMember(request);
+		MemberResDTO.JoinResultDTO joins = memberCommandService.joinMember(request);
 
 		BaseSuccessCode code = MemberSuccessCode.MEMBER_JOINED;
-		return ApiResponse.onSuccess(code, joins.getEmail());
+		return ApiResponse.onSuccess(code, joins);
 	}
 
 
@@ -63,6 +65,17 @@ public class MemberController {
 		@RequestParam(name = "page", defaultValue = "0") Integer page) {
 
 		MemberResDTO.HomeResponseDTO result = memberQueryService.getHomeData(memberId, regionName, page);
+
+		return ApiResponse.onSuccess(MemberSuccessCode.OK, result);
+	}
+
+	// 로그인
+	@PostMapping("/login")
+	@Operation(summary = "로그인")
+	public ApiResponse<MemberResDTO.LoginResultDTO> login(
+		@RequestBody @Valid MemberReqDTO.LoginDTO request
+	) {
+		MemberResDTO.LoginResultDTO result = memberCommandService.login(request);
 
 		return ApiResponse.onSuccess(MemberSuccessCode.OK, result);
 	}

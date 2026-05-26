@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import umc.domain.member.converter.MemberConverter;
 import umc.domain.member.dto.MemberReqDTO;
+import umc.domain.member.dto.MemberResDTO;
 import umc.domain.member.entity.Member;
 import umc.domain.member.entity.Term;
 import umc.domain.member.entity.mapping.MemberFood;
@@ -27,6 +28,8 @@ import umc.domain.store.entity.Food;
 import umc.domain.store.exception.StoreException;
 import umc.domain.store.exception.code.StoreErrorCode;
 import umc.domain.store.repository.FoodRepository;
+import umc.global.security.entity.AuthMember;
+import umc.global.security.util.JwtUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -38,9 +41,10 @@ public class MemberCommandService {
 	private final MemberFoodRepository memberFoodRepository;
 	private final TermRepository termRepository;
 	private final MemberTermRepository memberTermRepository;
+	private final JwtUtil jwtUtil;
 
 	@Transactional
-	public Member joinMember(MemberReqDTO.JoinDTO request) {
+	public MemberResDTO.JoinResultDTO joinMember(MemberReqDTO.JoinDTO request) {
 
 		// 1. 이메일 중복 검증
 		if(memberRepository.existsByEmail(request.getEmail())) {
@@ -98,6 +102,25 @@ public class MemberCommandService {
 
 			memberTermRepository.saveAll(memberTermList);
 		}
-		return savedMember;
+		return MemberConverter.toJoinDTO(savedMember);
+	}
+
+	@Transactional
+	public MemberResDTO.LoginResultDTO login(MemberReqDTO.LoginDTO request) {
+
+		Member member = memberRepository.findByEmail(request.getEmail())
+			.orElseThrow(()-> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+		if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+			throw new MemberException(MemberErrorCode.INVALID_PASSWORD);
+		}
+
+		AuthMember authMember = new AuthMember(member);
+
+		String accessToken = jwtUtil.createAccessToken(authMember);
+
+		return MemberResDTO.LoginResultDTO.builder()
+			.accessToken(accessToken)
+			.build();
 	}
 }
