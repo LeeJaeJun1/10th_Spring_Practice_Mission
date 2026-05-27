@@ -43,7 +43,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-configuration-processor'
 
 	// WebAuthn
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.security:spring-security-webauthn'
+
+	// OAuth
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
