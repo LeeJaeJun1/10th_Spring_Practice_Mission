@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import umc.domain.member.entity.Member;
+import umc.domain.member.enums.SocialType;
 import umc.domain.member.exception.MemberException;
 import umc.domain.member.exception.code.MemberErrorCode;
 import umc.domain.member.repository.MemberRepository;
@@ -23,6 +24,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 		String username
 	) throws UsernameNotFoundException {
 		Member member = memberRepository.findByEmail(username)
+			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+		return new AuthMember(member);
+	}
+
+	public UserDetails loadUserByUidAndSocialType(
+		SocialType socialType,
+		String username
+	) throws UsernameNotFoundException {
+		Member member = memberRepository.findBySocialTypeAndSocialUid(socialType, username)
 			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 		return new AuthMember(member);
 	}

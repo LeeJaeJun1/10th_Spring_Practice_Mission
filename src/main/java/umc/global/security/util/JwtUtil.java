@@ -18,6 +18,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+import umc.domain.member.enums.SocialType;
 import umc.global.security.entity.AuthMember;
 
 @Component
@@ -66,6 +67,22 @@ public class JwtUtil {
 		}
 	}
 
+	public SocialType getSocialType(String token) {
+		try {
+			return SocialType.valueOf(getClaims(token).getPayload().get("social_type").toString().toUpperCase());
+		} catch (JwtException e) {
+			return null;
+		}
+	}
+
+	public String getUid(String token) {
+		try {
+			return getClaims(token).getPayload().get("uid").toString();
+		} catch (JwtException e) {
+			return null;
+		}
+	}
+
 	// 토큰 생성
 	private String createToken(AuthMember member, Duration expiration) {
 		Instant now = Instant.now();
@@ -78,7 +95,8 @@ public class JwtUtil {
 		return Jwts.builder()
 			.subject(member.getUsername()) // User 이메일을 Subject로
 			.claim("role", authorities)
-			.claim("email", member.getUsername())
+			.claim("uid", member.getMember().getSocialUid())
+			.claim("social_type", member.getMember().getSocialType().name())
 			.issuedAt(Date.from(now)) // 언제 발급한지
 			.expiration(Date.from(now.plus(expiration))) // 언제까지 유효한지
 			.signWith(secretKey) // sign할 Key

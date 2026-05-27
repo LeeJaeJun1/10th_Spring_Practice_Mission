@@ -9,7 +9,10 @@ import org.springframework.data.domain.Page;
 import umc.domain.member.dto.MemberReqDTO;
 import umc.domain.member.dto.MemberResDTO;
 import umc.domain.member.entity.Member;
+import umc.domain.member.enums.Gender;
+import umc.domain.member.enums.MemberStatus;
 import umc.domain.mission.entity.Mission;
+import umc.global.security.dto.OAuthDTO;
 
 public class MemberConverter {
 
@@ -81,6 +84,23 @@ public class MemberConverter {
 		return MemberResDTO.JoinResultDTO.builder()
 			.memberId(member.getId())
 			.createdAt(LocalDateTime.now())
+			.build();
+	}
+
+	public static Member toMember(OAuthDTO oAuthDTO) {
+		return Member.builder()
+			.name(oAuthDTO.getName())
+			.email(oAuthDTO.getSocialEmail())
+			.socialUid(oAuthDTO.getSocialUid())
+			.socialType(oAuthDTO.getSocialType())
+			.gender(Gender.NONE)
+			.memberStatus(MemberStatus.ACTIVE)
+			.build();
+	}
+
+	public static MemberResDTO.LoginResultDTO toLogin(String accessToken) {
+		return MemberResDTO.LoginResultDTO.builder()
+			.accessToken(accessToken)
 			.build();
 	}
 }

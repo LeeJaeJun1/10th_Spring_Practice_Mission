@@ -73,6 +73,9 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private SocialType socialType;
 
+	@Column(name = "social_uid")
+	private String socialUid;
+
 	@Builder.Default
 	@Column(nullable = false, length = 20)
 	@Enumerated(EnumType.STRING)
