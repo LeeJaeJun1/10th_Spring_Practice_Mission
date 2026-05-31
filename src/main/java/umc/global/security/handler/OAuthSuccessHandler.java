@@ -44,7 +44,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 		response.setStatus(code.getStatus().value());
 
 		// 인증 객체 컨테이너에서 OAuth 인증 객체 가져오기
-		OAuthMember member = (OAuthMember) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		OAuthMember member = (OAuthMember) authentication.getPrincipal();
 
 		// 토큰 제작을 위해 OAuth 인증 객체에서 Member 추출 -> AuthMember 제작
 		String accessToken = jwtUtil.createAccessToken(new AuthMember(member.getMember()));
