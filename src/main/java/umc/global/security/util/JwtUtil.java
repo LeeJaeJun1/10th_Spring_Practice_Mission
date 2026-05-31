@@ -92,11 +92,19 @@ public class JwtUtil {
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
 
+		// NPE 방지. 소셜 타입이 없으면 LOCAL로 대체
+		String socialType = member.getMember().getSocialType()
+			!= null ? member.getMember().getSocialType().name() : SocialType.LOCAL.name();
+
+		// NPE 방지. socialUid가 없으면 DB 고유 PK 값을 문자열로 대체
+		String uid = member.getMember().getSocialUid() != null ?
+			member.getMember().getSocialUid() : String.valueOf(member.getMember().getId());
+
 		return Jwts.builder()
 			.subject(member.getUsername()) // User 이메일을 Subject로
 			.claim("role", authorities)
-			.claim("uid", member.getMember().getSocialUid())
-			.claim("social_type", member.getMember().getSocialType().name())
+			.claim("uid", uid)
+			.claim("social_type", socialType)
 			.issuedAt(Date.from(now)) // 언제 발급한지
 			.expiration(Date.from(now.plus(expiration))) // 언제까지 유효한지
 			.signWith(secretKey) // sign할 Key
