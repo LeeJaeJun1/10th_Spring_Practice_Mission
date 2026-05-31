@@ -33,11 +33,7 @@ public class MemberQueryService {
 
 	@Transactional(readOnly = true)
 	public MemberResDTO.GetInfo getInfo(AuthMember authMember) {
-
-		Member member =  memberRepository.findById(authMember.getMember().getId())
-			.orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-		return MemberConverter.toGetInfo(member);
+		return MemberConverter.toGetInfo(authMember.getMember());
 	}
 
 	// 홈화면
